@@ -1,0 +1,345 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>CampusLoop — Product Detail & Contact Seller</title>
+<style>
+  :root{
+    --indigo:#6366F1;
+    --indigo-dark:#4F46E5;
+    --indigo-light:#EEF0FF;
+    --green:#10B981;
+    --green-bg:#ECFDF5;
+    --text:#111827;
+    --sub:#6B7280;
+    --border:#E5E7EB;
+    --bg:#F8F9FC;
+    --card:#FFFFFF;
+  }
+  *{box-sizing:border-box;}
+  body{
+    margin:0;
+    font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;
+    background:var(--bg);
+    color:var(--text);
+  }
+  /* ---------- NAV ---------- */
+  .nav{
+    display:flex;align-items:center;justify-content:space-between;
+    padding:14px 32px;background:#fff;border-bottom:1px solid var(--border);
+  }
+  .brand{display:flex;align-items:center;gap:10px;font-weight:700;font-size:18px;color:var(--indigo);}
+  .brand-mark{
+    width:32px;height:32px;border-radius:8px;background:var(--indigo);
+    color:#fff;display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:700;
+  }
+  .nav-links{display:flex;gap:28px;align-items:center;font-size:14.5px;}
+  .nav-links a{color:var(--sub);text-decoration:none;}
+  .nav-links a.active{background:var(--indigo);color:#fff;padding:9px 20px;border-radius:20px;font-weight:600;}
+  .avatar{
+    width:36px;height:36px;border-radius:50%;background:var(--indigo);color:#fff;
+    display:flex;align-items:center;justify-content:center;font-weight:700;font-size:13px;
+  }
+
+  /* ---------- LAYOUT ---------- */
+  .stage{max-width:1000px;margin:32px auto;padding:0 24px;}
+  .view{display:none;}
+  .view.active{display:block;}
+  .toggle-bar{
+    max-width:1000px;margin:20px auto 0;padding:0 24px;
+    display:flex;gap:8px;font-size:13px;color:var(--sub);
+  }
+  .toggle-bar button{
+    border:1px solid var(--border);background:#fff;padding:7px 14px;border-radius:8px;
+    cursor:pointer;font-size:13px;color:var(--sub);
+  }
+  .toggle-bar button.on{background:var(--indigo);color:#fff;border-color:var(--indigo);}
+
+  /* ---------- PRODUCT DETAIL ---------- */
+  .detail-grid{display:grid;grid-template-columns:1.1fr 1fr;gap:36px;}
+  .gallery{
+    background:var(--card);border-radius:16px;overflow:hidden;border:1px solid var(--border);
+  }
+  .gallery-img{
+    height:340px;background:linear-gradient(135deg,#e5e7eb,#f3f4f6);
+    display:flex;align-items:center;justify-content:center;color:#9CA3AF;font-size:14px;position:relative;
+  }
+  .looped-badge{
+    position:absolute;top:14px;left:14px;background:var(--green-bg);color:var(--green);
+    font-size:12px;font-weight:600;padding:5px 10px;border-radius:20px;display:flex;align-items:center;gap:4px;
+  }
+  .dots{display:flex;gap:6px;justify-content:center;padding:14px;}
+  .dot{width:7px;height:7px;border-radius:50%;background:var(--border);}
+  .dot.on{background:var(--indigo);}
+
+  .panel{background:var(--card);border-radius:16px;border:1px solid var(--border);padding:24px;}
+  .seller-row{display:flex;align-items:center;justify-content:space-between;margin-bottom:16px;}
+  .seller-left{display:flex;align-items:center;gap:10px;}
+  .seller-avatar{
+    width:38px;height:38px;border-radius:50%;background:var(--indigo-light);color:var(--indigo);
+    display:flex;align-items:center;justify-content:center;font-weight:700;font-size:13px;
+  }
+  .seller-name{font-weight:600;font-size:14.5px;}
+  .seller-meta{font-size:12.5px;color:var(--sub);}
+  .verified-pill{
+    display:inline-flex;align-items:center;gap:4px;background:var(--indigo);color:#fff;
+    font-size:11.5px;font-weight:600;padding:3px 9px;border-radius:20px;
+  }
+  .trust{font-size:13px;color:var(--indigo);font-weight:600;}
+
+  h1.title{font-size:24px;margin:6px 0 10px;}
+  .price-row{display:flex;align-items:baseline;gap:10px;margin-bottom:10px;}
+  .price{font-size:28px;font-weight:700;color:var(--indigo);}
+  .old-price{font-size:16px;color:var(--sub);text-decoration:line-through;}
+
+  .savings-card{
+    background:var(--green-bg);border:1px solid #A7F3D0;border-radius:12px;
+    padding:14px 16px;margin:14px 0;display:flex;align-items:center;justify-content:space-between;
+  }
+  .savings-label{font-size:12.5px;color:#065F46;font-weight:600;}
+  .savings-amount{font-size:18px;font-weight:700;color:var(--green);}
+
+  .tags{display:flex;gap:8px;margin-bottom:16px;flex-wrap:wrap;}
+  .tag{font-size:12.5px;padding:5px 12px;border-radius:20px;font-weight:600;}
+  .tag.condition{background:var(--indigo-light);color:var(--indigo);}
+  .tag.course{background:#FEF3C7;color:#92400E;}
+
+  .desc{font-size:14.5px;line-height:1.6;color:#374151;margin-bottom:20px;}
+
+  .cta-row{display:flex;gap:12px;}
+  .btn{
+    flex:1;padding:13px 0;border-radius:10px;font-weight:600;font-size:14.5px;
+    cursor:pointer;border:none;text-align:center;
+  }
+  .btn-outline{background:#fff;border:1.5px solid var(--indigo);color:var(--indigo);}
+  .btn-filled{background:var(--indigo);color:#fff;}
+  .btn-filled:hover{background:var(--indigo-dark);}
+
+  /* ---------- CHAT SCREEN ---------- */
+  .chat-wrap{
+    max-width:640px;margin:0 auto;background:var(--card);border:1px solid var(--border);
+    border-radius:16px;overflow:hidden;
+  }
+  .chat-header{
+    padding:16px 20px;border-bottom:1px solid var(--border);
+    display:flex;align-items:center;justify-content:space-between;
+  }
+  .chat-header-left{display:flex;align-items:center;gap:10px;}
+  .chat-title{font-weight:600;font-size:15px;}
+  .chat-sub{font-size:12px;color:var(--sub);}
+  .view-listing{font-size:13px;color:var(--indigo);text-decoration:none;font-weight:600;}
+
+  .thread{padding:20px;display:flex;flex-direction:column;gap:12px;min-height:320px;background:#FAFAFC;}
+  .bubble{max-width:72%;padding:10px 14px;border-radius:14px;font-size:14px;line-height:1.5;}
+  .bubble.them{background:#fff;border:1px solid var(--border);align-self:flex-start;border-bottom-left-radius:4px;}
+  .bubble.me{background:var(--indigo);color:#fff;align-self:flex-end;border-bottom-right-radius:4px;}
+  .bubble-time{font-size:10.5px;color:var(--sub);margin-top:3px;}
+
+  .quick-replies{
+    display:flex;gap:8px;padding:12px 16px;flex-wrap:wrap;border-top:1px solid var(--border);background:#fff;
+  }
+  .qr-chip{
+    font-size:12.5px;padding:7px 13px;border-radius:20px;border:1px solid var(--border);
+    background:#fff;color:var(--indigo-dark);cursor:pointer;
+  }
+  .qr-chip:hover{background:var(--indigo-light);}
+
+  .chat-input-row{
+    display:flex;align-items:center;gap:10px;padding:14px 16px;border-top:1px solid var(--border);background:#fff;
+  }
+  .chat-input-row input{
+    flex:1;border:1px solid var(--border);border-radius:20px;padding:11px 16px;font-size:14px;outline:none;
+  }
+  .icon-btn{
+    width:38px;height:38px;border-radius:50%;border:none;background:var(--indigo-light);
+    color:var(--indigo);cursor:pointer;display:flex;align-items:center;justify-content:center;font-size:16px;
+  }
+  .send-btn{background:var(--indigo);color:#fff;}
+
+  @media(max-width:760px){
+    .detail-grid{grid-template-columns:1fr;}
+    .nav-links{display:none;}
+  }
+</style>
+</head>
+<body>
+
+  <div class="nav">
+    <div class="brand"><div class="brand-mark">CL</div>CampusLoop</div>
+    <div class="nav-links">
+      <a href="#">Home</a>
+      <a href="#">Browse</a>
+      <a class="active" href="#">Sell</a>
+      <a href="#">Saved</a>
+      <a href="#">My Listings</a>
+    </div>
+    <div class="avatar">AK</div>
+  </div>
+
+  <div class="toggle-bar">
+    <button class="on" id="btn-detail" onclick="showView('detail')">Product Detail</button>
+    <button id="btn-chat" onclick="showView('chat')">Contact Seller</button>
+  </div>
+
+  <!-- ================= PRODUCT DETAIL VIEW ================= -->
+  <div class="stage view active" id="view-detail">
+    <div class="detail-grid">
+      <div class="gallery">
+        <div class="gallery-img">
+          <span class="looped-badge">🔁 Looped 2×</span>
+          Product photo
+        </div>
+        <div class="dots">
+          <div class="dot on"></div><div class="dot"></div><div class="dot"></div><div class="dot"></div>
+        </div>
+      </div>
+
+      <div class="panel">
+        <div class="seller-row">
+          <div class="seller-left">
+            <div class="seller-avatar">SI</div>
+            <div>
+              <div class="seller-name">Sneha · ECE 4th Year</div>
+              <div class="seller-meta">Usually replies within 2 hours</div>
+            </div>
+          </div>
+          <div style="text-align:right;">
+            <span class="verified-pill">✓ Verified</span>
+            <div class="trust" style="margin-top:4px;">⭐ 4.7 Trust Score</div>
+          </div>
+        </div>
+
+        <h1 class="title">Fluke 101 Digital Multimeter</h1>
+
+        <div class="price-row">
+          <span class="price">₹900</span>
+          <span class="old-price">₹2,200</span>
+        </div>
+
+        <div class="savings-card">
+          <span class="savings-label">🔁 LOOP SAVINGS</span>
+          <span class="savings-amount">₹1,300 (59% off)</span>
+        </div>
+
+        <div class="tags">
+          <span class="tag condition">Good Condition</span>
+          <span class="tag course">ECE Lab Equipment</span>
+        </div>
+
+        <p class="desc">
+          Barely used digital multimeter, works perfectly — bought for a 3rd semester
+          electronics lab and no longer needed. Comes with original probes and case.
+          Meet near the ECE block or Central Library.
+        </p>
+
+        <div class="cta-row">
+          <button class="btn btn-outline" onclick="showView('chat')">Contact Seller</button>
+          <button class="btn btn-filled" onclick="showView('reserve')">Reserve in the Loop</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ================= CONTACT SELLER / CHAT VIEW ================= -->
+  <div class="stage view" id="view-chat">
+    <div class="chat-wrap">
+      <div class="chat-header">
+        <div class="chat-header-left">
+          <div class="seller-avatar">SI</div>
+          <div>
+            <div class="chat-title">Sneha · ECE 4th Year <span class="verified-pill" style="margin-left:6px;">✓</span></div>
+            <div class="chat-sub">Fluke 101 Digital Multimeter · ₹900</div>
+          </div>
+        </div>
+        <a class="view-listing" onclick="showView('detail')" href="#">View Listing →</a>
+      </div>
+
+      <div class="thread" id="thread">
+        <div class="bubble them">
+          Hi! I saw your listing for the multimeter — is it still available?
+          <div class="bubble-time">10:14 AM</div>
+        </div>
+        <div class="bubble me">
+          Yes it's still available! Barely used, works perfectly 🙂
+          <div class="bubble-time">10:16 AM</div>
+        </div>
+        <div class="bubble them">
+          Great, would you be able to meet near the Central Library sometime today?
+          <div class="bubble-time">10:17 AM</div>
+        </div>
+      </div>
+
+      <div class="quick-replies">
+        <div class="qr-chip" onclick="sendQuick(this)">Is this still available?</div>
+        <div class="qr-chip" onclick="sendQuick(this)">Can we meet at the library?</div>
+        <div class="qr-chip" onclick="sendQuick(this)">Can you lower the price?</div>
+      </div>
+
+      <div class="chat-input-row">
+        <button class="icon-btn">📎</button>
+        <input id="chat-input" type="text" placeholder="Type a message...">
+        <button class="icon-btn send-btn" onclick="sendMessage()">➤</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ================= MOCK RESERVE / CHECKOUT VIEW ================= -->
+  <div class="stage view" id="view-reserve">
+    <div class="panel" style="max-width:480px;margin:0 auto;text-align:center;">
+      <h1 class="title" style="font-size:20px;">Reserve in the Loop</h1>
+      <p class="desc">No online payment — pay the seller directly on pickup.</p>
+
+      <div class="savings-card" style="justify-content:center;gap:10px;">
+        <span class="savings-label">Fluke 101 Digital Multimeter</span>
+        <span class="savings-amount">₹900</span>
+      </div>
+
+      <div style="background:var(--indigo-light);border-radius:14px;padding:24px;margin:20px 0;">
+        <div style="font-size:12.5px;color:var(--sub);margin-bottom:8px;">YOUR PICKUP CODE</div>
+        <div style="font-size:34px;font-weight:700;letter-spacing:6px;color:var(--indigo);">493 217</div>
+      </div>
+
+      <div style="text-align:left;font-size:13.5px;color:var(--sub);margin-bottom:20px;">
+        📍 Suggested meet point: <b style="color:var(--text)">Central Library, Main Gate</b>
+      </div>
+
+      <button class="btn btn-filled" style="width:100%;" onclick="showView('detail')">Confirm Reservation</button>
+    </div>
+  </div>
+
+<script>
+function showView(name){
+  document.querySelectorAll('.view').forEach(v=>v.classList.remove('active'));
+  document.getElementById('view-'+name).classList.add('active');
+  document.getElementById('btn-detail').classList.toggle('on', name==='detail');
+  document.getElementById('btn-chat').classList.toggle('on', name==='chat');
+}
+
+function addBubble(text){
+  const thread = document.getElementById('thread');
+  const b = document.createElement('div');
+  b.className = 'bubble me';
+  const time = new Date().toLocaleTimeString([], {hour:'2-digit',minute:'2-digit'});
+  b.innerHTML = text + '<div class="bubble-time">'+time+'</div>';
+  thread.appendChild(b);
+  thread.scrollTop = thread.scrollHeight;
+}
+
+function sendMessage(){
+  const input = document.getElementById('chat-input');
+  if(input.value.trim()==='') return;
+  addBubble(input.value.trim());
+  input.value='';
+}
+
+function sendQuick(el){
+  addBubble(el.textContent);
+}
+
+document.getElementById('chat-input').addEventListener('keypress', function(e){
+  if(e.key==='Enter') sendMessage();
+});
+</script>
+
+</body>
+</html>
